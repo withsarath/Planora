@@ -1,15 +1,25 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import { connectDb } from "./config/database.js";
+import "dotenv/config";
 
-const app = new Hono()
+const app = new Hono();
+const PORT = Number(process.env.PORT) || 4000;
+app.get("/health", (c) => {
+  return c.text("Health check!");
+});
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
-
-serve({
-  fetch: app.fetch,
-  port: 3000
-}, (info) => {
-  console.log(`Server is running on http://localhost:${info.port}`)
-})
+const startServer = async () => {
+  try {
+    await connectDb();
+    serve({
+      fetch: app.fetch,
+      port: PORT
+    });
+    console.log(`Server running on http://localhost:${PORT}`);
+  } catch (err) {
+    console.error("Startup failed ❌", err);
+    process.exit(1);
+  }
+};
+startServer();

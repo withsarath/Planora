@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "./user.controller.js";
 import { verifyToken } from "../../middleware/authMiddleware.js";
 
-
 const userRoutes = new Hono();
 
 userRoutes.get("/me", verifyToken, (c) => {
